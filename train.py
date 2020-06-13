@@ -11,13 +11,13 @@ import utils
 import model
 
 BATCH_SIZE = 128
-LEARNING_RATE = 0.001
+LEARNING_RATE = 0.01
 GAMMA = 0.99
 TAU = 0.001
 
 class Trainer:
 
-	def __init__(self, state_dim, action_dim, action_lim, ram):
+	def __init__(self, state_dim, action_dim, action_lim, ram, load_model):
 		"""
 		:param state_dim: Dimensions of state (int)
 		:param action_dim: Dimension of action (int)
@@ -25,6 +25,9 @@ class Trainer:
 		:param ram: replay memory buffer object
 		:return:
 		"""
+
+		self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+		print("Device is : " + str(self.device))
 		self.state_dim = state_dim
 		self.action_dim = action_dim
 		self.action_lim = action_lim
@@ -32,12 +35,20 @@ class Trainer:
 		self.iter = 0
 		self.noise = utils.OrnsteinUhlenbeckActionNoise(self.action_dim)
 
-		self.actor = model.Actor(self.state_dim, self.action_dim).float()
-		self.target_actor = model.Actor(self.state_dim, self.action_dim).float()
+		if load_model:
+			self.actor = torch.load('models/actor')
+			self.critic = torch.load('models/critic')
+			self.target_actor = torch.load('models/actor')
+			self.target_critic = torch.load('models/critic')
+		else:
+			self.actor = model.Actor(self.state_dim, self.action_dim).float().to(self.device)
+			self.target_actor = model.Actor(self.state_dim, self.action_dim).float().to(self.device)
+			self.critic = model.Critic(self.state_dim, self.action_dim).float().to(self.device)
+			self.target_critic = model.Critic(self.state_dim, self.action_dim).float().to(self.device)
+
 		self.actor_optimizer = torch.optim.Adam(self.actor.parameters(),LEARNING_RATE)
 
-		self.critic = model.Critic(self.state_dim, self.action_dim).float()
-		self.target_critic = model.Critic(self.state_dim, self.action_dim).float()
+
 		self.critic_optimizer = torch.optim.Adam(self.critic.parameters(),LEARNING_RATE)
 
 		utils.hard_update(self.target_actor, self.actor)

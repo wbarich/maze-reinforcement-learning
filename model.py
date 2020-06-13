@@ -45,12 +45,7 @@ class Critic(nn.Module):
 		a = F.relu(self.fc1(a))
 		a = F.relu(self.fc2(a))
 
-		try:
-			xa = torch.cat((x, a),dim=1)
-		except:
-			ipdb.set_trace()
-
-
+		xa = torch.cat((x, a),dim=1)
 		xa = self.fc3(xa)
 
 		return xa
