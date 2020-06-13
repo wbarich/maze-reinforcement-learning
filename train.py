@@ -111,7 +111,6 @@ class Trainer:
 
 		return loss_critic, loss_actor
 
-
 	def save_models(self, episode_count):
 		"""
 		saves the target actor and critic models

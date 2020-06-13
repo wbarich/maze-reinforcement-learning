@@ -1,5 +1,5 @@
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-from __future__ import division
+# from __future__ import division
 import numpy as np
 from environment import environment
 from agent import agent
@@ -10,8 +10,8 @@ import random
 import torch
 from torch.autograd import Variable
 import os
-import psutil
-import gc
+# import psutil
+# import gc
 import train
 import buffer
 #
@@ -28,7 +28,7 @@ A_MAX = 10
 ram = buffer.MemoryBuffer(MAX_BUFFER)
 trainer = train.Trainer(S_DIM, A_DIM, A_MAX, ram)
 optimize_after_episode = 10
-optimize_every = 1
+optimize_every = 5
 #
 
 start_point = 15, 90
@@ -73,7 +73,7 @@ for _ep in range(MAX_EPISODES):
     reward_hist.append(rewards)
     episode_step_hist.append(step)
 
-    if (_ep >= optimize_after_episode) and ((_ep+1)%optimize_every ==0):
+    if (_ep >= optimize_after_episode) and ((_ep)%optimize_every ==0):
         loss_critic, loss_actor = trainer.optimize()
         print("episode " +str(_ep).ljust(5) +
         " | " + "Average Rewards " + str(round(sum(reward_hist)/len(reward_hist),1)).ljust(5) +
