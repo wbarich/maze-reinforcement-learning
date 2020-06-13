@@ -97,8 +97,8 @@ for _ep in range(MAX_EPISODES):
             " | " + "Critic loss " + str(round(loss_critic.detach().item(), 3)).ljust(6) +
             " | " + "Actor loss " + str(round(loss_actor.detach().item(), 3)).ljust(6)
             )
-            torch.save(trainer.critic, r'models/critic')
-            torch.save(trainer.actor, r'models/actor')
+            torch.save(trainer.critic, r'models/critic.pt')
+            torch.save(trainer.actor, r'models/actor.pt')
 
         else:
             print("episode " +str(_ep).ljust(5) +
