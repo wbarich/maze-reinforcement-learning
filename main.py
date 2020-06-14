@@ -37,7 +37,8 @@ def main():
     [(30,30) , (40, 40)],
     ]
     start_point = 15, 90
-    end_point = 20, 90
+    end_point = 70, 30
+    new_model = True
 
     # creating environment
     env = environment(100, 100, obstacles, start_point, end_point)
@@ -50,7 +51,8 @@ def main():
         np.random.seed(random_seed)
 
     memory = Memory()
-    ppo = PPO(state_dim, action_dim, action_std, lr, betas, gamma, K_epochs, eps_clip)
+
+    ppo = PPO(state_dim, action_dim, action_std, lr, betas, gamma, K_epochs, eps_clip, new_model)
 
     # logging variables
     running_reward = 0
@@ -65,17 +67,17 @@ def main():
             # Running policy_old:
             action = ppo.select_action(state, memory)
             state, reward, done = env.step(action)
-
+            env.plot_scene()
             # Saving reward and is_terminals:
-            memory.rewards.append(reward)
-            memory.is_terminals.append(done)
-
-            # update if its time
-            if time_step % update_timestep == 0:
-                ppo.update(memory)
-                memory.clear_memory()
-                time_step = 0
-            running_reward += reward
+            # memory.rewards.append(reward)
+            # memory.is_terminals.append(done)
+            #
+            # # update if its time
+            # if time_step % update_timestep == 0:
+            #     ppo.update(memory)
+            #     memory.clear_memory()
+            #     time_step = 0
+            # running_reward += reward
 
             if done:
                 break
@@ -83,8 +85,8 @@ def main():
         avg_length += t
 
         # save every 500 episodes
-        if i_episode % 200 == 0:
-            torch.save(ppo.policy.state_dict(), 'models/agent_model.pth')
+        # if i_episode % 200 == 0:
+        #     torch.save(ppo.policy.state_dict(), 'models/agent_model.pth')
 
         # logging
         if i_episode % log_interval == 0:
