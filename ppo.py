@@ -21,10 +21,12 @@ class PPO:
         self.eps_clip = eps_clip
         self.K_epochs = K_epochs
 
-        self.policy = ActorCritic(state_dim, action_dim, action_std).to(device)
+        self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
+        self.policy = ActorCritic(state_dim, action_dim, action_std).to(self.device)
         self.optimizer = torch.optim.Adam(self.policy.parameters(), lr=lr, betas=betas)
 
-        self.policy_old = ActorCritic(state_dim, action_dim, action_std).to(device)
+        self.policy_old = ActorCritic(state_dim, action_dim, action_std).to(self.device)
         self.policy_old.load_state_dict(self.policy.state_dict())
 
         self.MseLoss = nn.MSELoss()
@@ -32,7 +34,7 @@ class PPO:
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     def select_action(self, state, memory):
-        state = torch.FloatTensor(state).to(device)
+        state = torch.FloatTensor(state).to(self.device)
         return self.policy_old.act(state, memory).cpu().data.numpy().flatten()
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -48,13 +50,13 @@ class PPO:
             rewards.insert(0, discounted_reward)
 
         # Normalizing the rewards:
-        rewards = torch.tensor(rewards).to(device)
+        rewards = torch.tensor(rewards).to(self.device)
         rewards = (rewards - rewards.mean()) / (rewards.std() + 1e-5)
 
         # convert list to tensor
-        old_states = torch.squeeze(torch.stack(memory.states).to(device), 1).detach()
-        old_actions = torch.squeeze(torch.stack(memory.actions).to(device), 1).detach()
-        old_logprobs = torch.squeeze(torch.stack(memory.logprobs), 1).to(device).detach()
+        old_states = torch.squeeze(torch.stack(memory.states).to(self.device), 1).detach()
+        old_actions = torch.squeeze(torch.stack(memory.actions).to(self.device), 1).detach()
+        old_logprobs = torch.squeeze(torch.stack(memory.logprobs), 1).to(self.device).detach()
 
         # Optimize policy for K epochs:
 

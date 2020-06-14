@@ -8,6 +8,7 @@ import ipdb
 import numpy as np
 from environment import environment
 from memory import Memory
+from ppo import PPO
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

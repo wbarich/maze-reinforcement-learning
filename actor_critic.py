@@ -34,7 +34,7 @@ class ActorCritic(nn.Module):
         self.a_linear1 = nn.Linear(64 * 14 * 14, 512)
         self.a_linear2 = nn.Linear(512, action_dim)
 
-        self.action_var = torch.full((action_dim,), action_std*action_std).to(device)
+        self.action_var = torch.full((action_dim,), action_std*action_std).to(self.device)
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -64,4 +64,35 @@ class ActorCritic(nn.Module):
         return x
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    def act(self, state, memory):
+        state = state.unsqueeze(0)
+        state = state.unsqueeze(0)
+        action_mean = self.actor_forward(state)
+        cov_mat = torch.diag(self.action_var).to(self.device)
+
+        dist = MultivariateNormal(action_mean, cov_mat)
+        action = dist.sample()
+        action_logprob = dist.log_prob(action)
+
+        memory.states.append(state)
+        memory.actions.append(action)
+        memory.logprobs.append(action_logprob)
+
+        return action.detach()
+
+    def evaluate(self, state, action):
+        action_mean = self.actor_forward(state)
+
+        action_var = self.action_var.expand_as(action_mean)
+        cov_mat = torch.diag_embed(action_var).to(self.device)
+
+        dist = MultivariateNormal(action_mean, cov_mat)
+
+        action_logprobs = dist.log_prob(action)
+        dist_entropy = dist.entropy()
+        state_value = self.critic_forward(state)
+
+        return action_logprobs, torch.squeeze(state_value), dist_entropy
+
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
