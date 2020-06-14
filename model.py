@@ -14,6 +14,7 @@ class Critic(nn.Module):
 		"""
 		super(Critic, self).__init__()
 
+		self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 		self.state_dim = state_dim
 		self.action_dim = action_dim
 		self.conv1 = nn.Conv2d(1, 32, kernel_size = 5, stride = 2, padding = 2) #100 - 5 + 4/ 2 = 50
@@ -35,7 +36,7 @@ class Critic(nn.Module):
 		:return: Value function : Q(S,a) (Torch Variable : [n,1] )
 		"""
 
-		x = F.relu(self.conv1(x))
+		x = F.relu(self.conv1(x.to(self.device)))
 		x = F.relu(self.conv2(x))
 		x = F.relu(self.conv3(x))
 		x = x.view(-1, 64 * 14 * 14)
@@ -64,6 +65,7 @@ class Actor(nn.Module):
 
 		self.state_dim = state_dim
 		self.action_dim = action_dim
+		self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 		self.conv1 = nn.Conv2d(1, 32, kernel_size = 5, stride = 2, padding = 2) #100 - 5 + 4/ 2 = 50
 		self.conv2 = nn.Conv2d(32, 64, kernel_size = 3, stride = 2, padding = 2) #50 -3/2 = 26
@@ -83,7 +85,7 @@ class Actor(nn.Module):
 		"""
 
 		try:
-			x = F.relu(self.conv1(x))
+			x = F.relu(self.conv1(x.to(self.device)))
 		except:
 			print(x.shape)
 			ipdb.set_trace()

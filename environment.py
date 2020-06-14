@@ -124,6 +124,17 @@ class environment:
 
         return state, reward, done
 
+    def step(self, action):
+
+        """
+        Move, reward the agent.
+        """
+
+        state = self.move_agent(action)
+        reward, done = self.get_reward()
+
+        return state, reward, done
+
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     def get_reward(self):
@@ -146,7 +157,8 @@ class environment:
 
     def move_agent(self, action):
 
-        action = action[0]
+        
+
         x_s = -1 if action[0] < 0 else 1
         y_s = -1 if action[1] < 0 else 1
 

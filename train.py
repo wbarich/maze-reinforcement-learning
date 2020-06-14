@@ -64,7 +64,7 @@ class Trainer:
 		state = state.unsqueeze(0)
 		state = state.unsqueeze(0)
 		action = self.target_actor.forward(state.float()).detach()
-		return action.data.numpy()
+		return action.data.cpu().numpy()
 
 	def get_exploration_action(self, state):
 		"""
@@ -76,7 +76,7 @@ class Trainer:
 		state = state.unsqueeze(0)
 		state = state.unsqueeze(0)
 		action = self.actor.forward(state.float()).detach()
-		new_action = action.data.numpy() + (self.noise.sample() * self.action_lim)
+		new_action = action.data.cpu().numpy() + (self.noise.sample() * self.action_lim)
 		return new_action
 
 	def optimize(self):

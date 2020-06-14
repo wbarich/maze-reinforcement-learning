@@ -34,7 +34,6 @@ optimize_every = 5
 
 start_point = 15, 90
 end_point = 20, 90
-search_radius = 10
 
 obstacles = [
 [(20,10) , (20, 50)],
