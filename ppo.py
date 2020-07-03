@@ -23,8 +23,6 @@ class PPO:
 
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-        new_model = False
-
         self.policy = ActorCritic(state_dim, action_dim, action_std).to(self.device)
         self.optimizer = torch.optim.Adam(self.policy.parameters(), lr=lr, betas=betas)
 
@@ -32,8 +30,9 @@ class PPO:
         self.policy_old.load_state_dict(self.policy.state_dict())
 
         if not new_model:
-            self.policy.load_state_dict(torch.load('models/agent_model.pth'))
-            self.policy_old.load_state_dict(torch.load('models/agent_model.pth'))
+            print(new_model)
+            self.policy.load_state_dict(torch.load('agent_model.pth'))
+            self.policy_old.load_state_dict(torch.load('agent_model.pth'))
 
         self.MseLoss = nn.MSELoss()
 
