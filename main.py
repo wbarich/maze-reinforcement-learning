@@ -67,26 +67,26 @@ def main():
             # Running policy_old:
             action = ppo.select_action(state, memory)
             state, reward, done = env.step(action)
-            env.plot_scene()
-            # Saving reward and is_terminals:
-            # memory.rewards.append(reward)
-            # memory.is_terminals.append(done)
-            #
-            # # update if its time
-            # if time_step % update_timestep == 0:
-            #     ppo.update(memory)
-            #     memory.clear_memory()
-            #     time_step = 0
-            # running_reward += reward
+            # env.plot_scene()
+            Saving reward and is_terminals:
+            memory.rewards.append(reward)
+            memory.is_terminals.append(done)
+
+            # update if its time
+            if time_step % update_timestep == 0:
+                ppo.update(memory)
+                memory.clear_memory()
+                time_step = 0
+            running_reward += reward
 
             if done:
                 break
 
         avg_length += t
 
-        # save every 500 episodes
-        # if i_episode % 200 == 0:
-        #     torch.save(ppo.policy.state_dict(), 'models/agent_model.pth')
+        save every 500 episodes
+        if i_episode % 200 == 0:
+            torch.save(ppo.policy.state_dict(), 'agent_model.pth')
 
         # logging
         if i_episode % log_interval == 0:
