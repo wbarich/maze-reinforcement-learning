@@ -30,7 +30,6 @@ class PPO:
         self.policy_old.load_state_dict(self.policy.state_dict())
 
         if not new_model:
-            print(new_model)
             self.policy.load_state_dict(torch.load('agent_model.pth', map_location = torch.device(self.device)))
             self.policy_old.load_state_dict(torch.load('agent_model.pth', map_location = torch.device(self.device)))
 

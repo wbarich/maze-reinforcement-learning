@@ -39,7 +39,7 @@ def main():
     # start_point = 15, 90
     start_point = 30, 20
     end_point = 70, 30
-    new_model = False
+    new_model = True
 
     # creating environment
     env = environment(100, 100, obstacles, start_point, end_point)
@@ -68,35 +68,35 @@ def main():
             # Running policy_old:
             action = ppo.select_action(state, memory)
             state, reward, done = env.step(action)
-            env.plot_scene()
-            # Saving reward and is_terminals:
-            # memory.rewards.append(reward)
-            # memory.is_terminals.append(done)
-            # #
-            # # # update if its time
-            # if time_step % update_timestep == 0:
-            #     ppo.update(memory)
-            #     memory.clear_memory()
-            #     time_step = 0
-            # running_reward += reward
+            # env.plot_scene()
+            Saving reward and is_terminals:
+            memory.rewards.append(reward)
+            memory.is_terminals.append(done)
+            #
+            # # update if its time
+            if time_step % update_timestep == 0:
+                ppo.update(memory)
+                memory.clear_memory()
+                time_step = 0
+            running_reward += reward
 
             if done:
                 break
 
         avg_length += t
 
-        # save every 500 episodes
-        # if i_episode % 200 == 0:
-        #     torch.save(ppo.policy.state_dict(), 'agent_model.pth')
-        #
-        # # logging
-        # if i_episode % log_interval == 0:
-        #     avg_length = int(avg_length/log_interval)
-        #     running_reward = int((running_reward/log_interval))
-        #
-        #     print('Episode {} \t Avg length: {} \t Avg reward: {}'.format(i_episode, avg_length, running_reward))
-        #     running_reward = 0
-        #     avg_length = 0
+        save every 500 episodes
+        if i_episode % 200 == 0:
+            torch.save(ppo.policy.state_dict(), 'agent_model.pth')
+
+        # logging
+        if i_episode % log_interval == 0:
+            avg_length = int(avg_length/log_interval)
+            running_reward = int((running_reward/log_interval))
+
+            print('Episode {} \t Avg length: {} \t Avg reward: {}'.format(i_episode, avg_length, running_reward))
+            running_reward = 0
+            avg_length = 0
 
 if __name__ == '__main__':
     main()

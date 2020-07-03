@@ -143,7 +143,7 @@ class environment:
         Determine if rewarded.
         """
 
-        if self.agent_state[0] == self.goal_point[0] and self.agent_state[1] == self.goal_point[1]:
+        if self.agent_state[0] in [self.goal_point[0] -1, self.goal_point[0], self.goal_point[0] + 1] and self.agent_state[1] in [self.goal_point[1] -1, self.goal_point[1], self.goal_point[1] + 1]:
             reward = 1
             done = True
 
@@ -157,7 +157,7 @@ class environment:
 
     def move_agent(self, action):
 
-        
+
 
         x_s = -1 if action[0] < 0 else 1
         y_s = -1 if action[1] < 0 else 1
