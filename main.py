@@ -19,7 +19,7 @@ def main():
     max_episodes = 2000        # max training episodes
     max_timesteps = 100        # max timesteps in one episode
 
-    update_timestep = 4000      # update policy every n timesteps
+    update_timestep = 1000      # update policy every n timesteps
     action_std = 0.5            # constant std for action distribution (Multivariate Normal)
     K_epochs = 10               # update policy for K epochs
     eps_clip = 0.2              # clip parameter for PPO
@@ -38,7 +38,7 @@ def main():
     ]
     start_point = 15, 90
     end_point = 70, 30
-    new_model = True
+    new_model = False
 
     # creating environment
     env = environment(100, 100, obstacles, start_point, end_point)
@@ -67,17 +67,17 @@ def main():
             # Running policy_old:
             action = ppo.select_action(state, memory)
             state, reward, done = env.step(action)
-            env.plot_scene()
+            #env.plot_scene()
             # Saving reward and is_terminals:
-            # memory.rewards.append(reward)
-            # memory.is_terminals.append(done)
+            memory.rewards.append(reward)
+            memory.is_terminals.append(done)
             #
             # # update if its time
-            # if time_step % update_timestep == 0:
-            #     ppo.update(memory)
-            #     memory.clear_memory()
-            #     time_step = 0
-            # running_reward += reward
+            if time_step % update_timestep == 0:
+                ppo.update(memory)
+                memory.clear_memory()
+                time_step = 0
+            running_reward += reward
 
             if done:
                 break
